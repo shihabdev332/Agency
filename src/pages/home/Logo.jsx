@@ -4,11 +4,11 @@ import { FaAmazon, FaApple, FaFacebook, FaGoogle, FaMicrosoft } from "react-icon
 
 const Logo = () => {
   const logos = [
-    { icon: FaApple, name: "NextBridge" },
-    { icon: FaGoogle, name: "ZymaTech" },
-    { icon: FaAmazon, name: "ByteLab" },
-    { icon: FaMicrosoft, name: "Solutech" },
-    { icon: FaFacebook, name: "TechnoVista" },
+     { icon: FaApple, name: "Apple" },
+    { icon: FaGoogle, name: "Google" },
+    { icon: FaAmazon, name: "Amazon" },
+    { icon: FaMicrosoft, name: "Microsoft" },
+    { icon: FaFacebook, name: "Facebook" },
   ];
 
   return (

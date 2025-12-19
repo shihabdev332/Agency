@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -13,119 +14,110 @@ const Contact = () => {
   const [submitted, setSubmitted] = useState(false);
 
   const validate = () => {
-    let tempErrors = {};
+    const temp = {};
 
-    if (!formData.name.trim()) tempErrors.name = "Name is required.";
-    if (!formData.email.trim()) tempErrors.email = "Email is required.";
+    if (!formData.name.trim()) temp.name = "Name is required";
+    if (!formData.email.trim()) temp.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email))
-      tempErrors.email = "Enter a valid email address.";
-    if (!formData.subject.trim()) tempErrors.subject = "Subject is required.";
+      temp.email = "Invalid email address";
+    if (!formData.subject.trim()) temp.subject = "Subject is required";
     if (!formData.message.trim() || formData.message.length < 10)
-      tempErrors.message = "Message must be at least 10 characters long.";
+      temp.message = "Message must be at least 10 characters";
 
-    setErrors(tempErrors);
-    return Object.keys(tempErrors).length === 0;
+    setErrors(temp);
+    return Object.keys(temp).length === 0;
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (validate()) {
-      setSubmitted(true);
-      setFormData({ name: "", email: "", subject: "", message: "" });
-      setTimeout(() => setSubmitted(false), 4000);
-    }
+    if (!validate()) return;
+
+    setSubmitted(true);
+    setFormData({ name: "", email: "", subject: "", message: "" });
+    setTimeout(() => setSubmitted(false), 4000);
   };
 
-  const whatsappNumber = "8801700000000"; // demo BD number
-  const whatsappMessage = `Hello! I want to know more about your services.`;
+  const whatsappNumber = "8801700000000";
+  const whatsappMessage = "Hello! I want to know more about your services.";
 
   return (
-    <section className="bg-gray-50 dark:bg-gray-900 py-16 px-6 md:px-20" id="contact">
-      <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-8 md:p-10">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
-          Contact <span className="text-indigo-500">Us</span>
+    <section
+      id="contact"
+      className="bg-gradient-to-br from-[#f8fafc] to-[#eef2ff] py-24 px-5"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="max-w-3xl mx-auto bg-white shadow-2xl rounded-2xl p-8 md:p-12"
+      >
+        {/* Heading */}
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-8">
+          Contact <span className="text-indigo-600">Us</span>
         </h2>
 
         {submitted && (
-          <div className="text-green-600 font-semibold text-center mb-4">
-            ✅ Message sent successfully! We'll get back to you soon.
-          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-green-600 font-semibold text-center mb-6"
+          >
+            ✅ Message sent successfully! We’ll contact you soon.
+          </motion.div>
         )}
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Name */}
-          <div>
-            <label className="block font-medium text-gray-700 dark:text-gray-200 mb-1">
-              Full Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              placeholder="Enter your name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-transparent text-gray-800 dark:text-gray-100"
-            />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-          </div>
-
-          {/* Email */}
-          <div>
-            <label className="block font-medium text-gray-700 dark:text-gray-200 mb-1">
-              Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              placeholder="your@email.com"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-transparent text-gray-800 dark:text-gray-100"
-            />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-          </div>
-
-          {/* Subject */}
-          <div>
-            <label className="block font-medium text-gray-700 dark:text-gray-200 mb-1">
-              Subject
-            </label>
-            <input
-              type="text"
-              name="subject"
-              placeholder="What's this about?"
-              value={formData.subject}
-              onChange={handleChange}
-              className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-transparent text-gray-800 dark:text-gray-100"
-            />
-            {errors.subject && (
-              <p className="text-red-500 text-sm">{errors.subject}</p>
-            )}
-          </div>
+          {[
+            { label: "Full Name", name: "name", type: "text" },
+            { label: "Email Address", name: "email", type: "email" },
+            { label: "Subject", name: "subject", type: "text" },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="block font-medium text-gray-700 mb-1">
+                {field.label}
+              </label>
+              <input
+                type={field.type}
+                name={field.name}
+                value={formData[field.name]}
+                onChange={handleChange}
+                placeholder={`Enter ${field.label.toLowerCase()}`}
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              />
+              {errors[field.name] && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors[field.name]}
+                </p>
+              )}
+            </div>
+          ))}
 
           {/* Message */}
           <div>
-            <label className="block font-medium text-gray-700 dark:text-gray-200 mb-1">
+            <label className="block font-medium text-gray-700 mb-1">
               Message
             </label>
             <textarea
-              name="message"
               rows="5"
-              placeholder="Write your message here..."
+              name="message"
               value={formData.message}
               onChange={handleChange}
-              className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-transparent text-gray-800 dark:text-gray-100"
-            ></textarea>
+              placeholder="Write your message..."
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            />
             {errors.message && (
-              <p className="text-red-500 text-sm">{errors.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.message}
+              </p>
             )}
           </div>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <button
             type="submit"
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition-all cursor-pointer"
@@ -133,25 +125,25 @@ const Contact = () => {
             Send Message
           </button>
 
-          {/* WhatsApp Contact */}
-          <div className="text-center mt-6">
+          {/* WhatsApp CTA */}
+          <div className="text-center pt-6">
             <a
               href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
                 whatsappMessage
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-lg transition-all"
+              className="inline-flex items-center gap-3 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full transition-all"
             >
               <FaWhatsapp className="text-2xl" />
               Chat on WhatsApp
             </a>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+            <p className="text-sm text-gray-500 mt-2">
               WhatsApp Demo: +88 01700-000000
             </p>
           </div>
         </form>
-      </div>
+      </motion.div>
     </section>
   );
 };

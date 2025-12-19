@@ -1,68 +1,113 @@
 import Heading from "../../component/Heading";
-import { FiActivity, FiCalendar, FiCompass, FiTruck } from "react-icons/fi";
-
-
+import {
+  FiActivity,
+  FiCalendar,
+  FiCompass,
+  FiTruck,
+} from "react-icons/fi";
+import { motion } from "framer-motion";
 
 const services = [
- {
-    icon:FiCalendar,
-    title:"Customizable setting",
-    description:"Our passion lies in creating innovative, user-centric websites. We love transforming ideas into digital experiences that are visually engaging and functionally seamless, helping businesses grow and connect with their audience through creative design and technology."
- },
-    
+  {
+    icon: FiCalendar,
+    title: "Customizable Settings",
+    description:
+      "We create innovative, user-centric websites that transform ideas into visually engaging and functionally seamless digital experiences, helping businesses grow and connect with their audience.",
+  },
   {
     icon: FiCompass,
     title: "Developer Friendly",
     description:
-      "Our agency is developer-friendly, focusing on seamless collaboration with developers. We provide clean, well-structured code and maintain flexibility, ensuring smooth integration and efficient project development while prioritizing quality and performance.",
+      "Our workflow is built for developers — clean architecture, well-structured code, and flexibility that ensures smooth collaboration, scalability, and long-term performance.",
   },
-
   {
     icon: FiActivity,
-    title: "Responsive design",
+    title: "Responsive Design",
     description:
-      "Responsive design ensures a website adapts smoothly to various screen sizes, providing an optimal user experience on desktops, tablets, and mobile devices, enhancing accessibility and usability across all platforms.",
+      "Our responsive designs adapt flawlessly across desktops, tablets, and mobile devices, ensuring optimal usability, accessibility, and performance on every screen size.",
   },
-
   {
     icon: FiTruck,
-    title: "Cloud integration",
+    title: "Cloud Integration",
     description:
-      "Cloud integration involves connecting web applications or services to cloud platforms, enabling seamless data storage, scalability, and remote access. It enhances collaboration, performance, and reliability, reducing infrastructure costs and improving flexibility.",
+      "We integrate cloud solutions that enable scalability, secure data storage, remote access, and seamless collaboration — all while reducing infrastructure costs.",
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.2 },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 50 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
 
 const Services = () => {
   return (
-    <div className="max-w-screen-2xl container bg-white mx-auto p-20 mt-20 ">
-      <Heading
-        heading="Explore our range of professional services tailors to 
-        meet our business need."
-        subheading="Services"
-        description="At our web design agency, we craft custom, visually appealing, 
-and user-friendly websites that reflect your brand’s unique identity. Our team 
-focuses on delivering responsive, high-performance sites that enhance user 
-experience and drive business success. We offer services including web design,
- e-commerce solutions, branding, UX/UI design, and website redesigns. We are committed 
- to helping businesses thrive in the digital world by creating websites that are not only
-  beautiful but also functional and optimized for growth."
-      />
+    <section className="bg-gradient-to-br from-[#f8fafc] to-[#eef2ff]">
+      <div className="max-w-screen-2xl mx-auto py-24 px-5">
 
-      {/* services container    */}
+        {/* Heading */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <Heading
+            heading="Explore Our Range of Professional Services Tailored to Meet Your Business Needs"
+            subheading="Services"
+            description="We design and build high-performance, visually compelling websites that reflect your brand identity. From UI/UX design to cloud-ready solutions, we focus on usability, scalability, and long-term business growth."
+          />
+        </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:w-4/5 mx-auto mb-6 ">
-    {
-        services.map((services, index) =>(
-            <div key={index} className="flex flex-col items-center p-6 hover:shadow-2xl hover:rounded-md transition cursor-pointer shadow" >
-                <services.icon className="text-blue-600 text-4xl mb-4"/>
-                <h2 className="font-semibold text-xl">{services.title}</h2>
-                <p className="text-gray-600 mt-2 md:px-10">{services.description}</p>
-            </div>
-        ))
-    }
-    </div>
-    </div>
+        {/* Services Grid */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-10 md:w-4/5 mx-auto mt-16"
+        >
+          {services.map((service, index) => (
+            <motion.div
+              key={index}
+              variants={cardVariants}
+              whileHover={{
+                y: -10,
+                boxShadow: "0 25px 50px rgba(0,0,0,0.12)",
+              }}
+              className="group bg-white rounded-2xl p-8 text-center cursor-pointer transition"
+            >
+              {/* Icon */}
+              <div className="w-16 h-16 mx-auto flex items-center justify-center rounded-full bg-blue-100 mb-6 group-hover:bg-blue-200 transition">
+                <service.icon className="text-blue-600 text-3xl" />
+              </div>
+
+              {/* Title */}
+              <h2 className="font-semibold text-xl text-gray-800 mb-3">
+                {service.title}
+              </h2>
+
+              {/* Description */}
+              <p className="text-gray-600 text-sm leading-relaxed px-2 md:px-6">
+                {service.description}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+      </div>
+    </section>
   );
 };
 

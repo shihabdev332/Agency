@@ -1,12 +1,11 @@
 import React from "react";
-
 import {
   FaLinkedinIn,
   FaTwitter,
   FaInstagram,
   FaFacebookF,
 } from "react-icons/fa";
-import { Link } from "react-router";
+import { motion } from "framer-motion";
 import Heading from "../../component/Heading";
 
 const teamMembers = [
@@ -52,63 +51,101 @@ const teamMembers = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15 },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 40 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
+
 const TeamSection = () => {
   return (
-    <div className="bg-colorBg pt-20">
-      <div className="section-container">
-        <Heading
-          heading="Meet The Experts"
-          subheading="Our Team"
-          description=""
-        />
+    <section className="bg-gradient-to-br from-[#f8fafc] to-[#eef2ff] py-24">
+      <div className="max-w-screen-2xl mx-auto px-5">
 
-        {/* team member cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-          {teamMembers.map((member, i) => (
-            <div
-              key={i}
-              className="bg-white shadow-lg rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
+        {/* Heading */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <Heading
+            heading="Meet the Experts Behind Our Success"
+            subheading="Our Team"
+            description="A passionate team of designers, developers, and strategists dedicated to building exceptional digital experiences."
+          />
+        </motion.div>
+
+        {/* Team Grid */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mt-16"
+        >
+          {teamMembers.map((member) => (
+            <motion.div
+              key={member.id}
+              variants={cardVariants}
+              whileHover={{ y: -10 }}
+              className="group bg-white rounded-2xl shadow-lg overflow-hidden transition"
             >
-              <img
-                src={member.image}
-                alt={member.name}
-                className="w-full h-56 object-cover"
-              />
+              {/* Image */}
+              <div className="relative overflow-hidden">
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+                />
 
-              {/* content */}
-              <div className="p-5">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                {/* Social Overlay */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-4">
+                  <a href={member.linkedIn} target="_blank" rel="noreferrer">
+                    <FaLinkedinIn className="text-white hover:text-blue-400 text-xl" />
+                  </a>
+                  <a href={member.twitter} target="_blank" rel="noreferrer">
+                    <FaTwitter className="text-white hover:text-blue-400 text-xl" />
+                  </a>
+                  <a href={member.instagram} target="_blank" rel="noreferrer">
+                    <FaInstagram className="text-white hover:text-blue-400 text-xl" />
+                  </a>
+                  <a href={member.facebook} target="_blank" rel="noreferrer">
+                    <FaFacebookF className="text-white hover:text-blue-400 text-xl" />
+                  </a>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-6 text-center">
+                <h3 className="text-lg font-semibold text-gray-800">
                   {member.name}
                 </h3>
-                <p className="text-sm text-gray-500 mb-4">{member.role}</p>
+                <p className="text-sm text-gray-500 mb-6">
+                  {member.role}
+                </p>
 
-                {/* social icons */}
-
-                <div className="flex space-x-4 mb-5 items-center">
-                  <Link to={member.linkedIn}>
-                    <FaLinkedinIn className="text-blue-600 hover:text-blue-800" />
-                  </Link>
-                  <Link to={member.twitter}>
-                    <FaTwitter className="text-blue-600 hover:text-blue-800" />
-                  </Link>
-                  <Link to={member.instagram}>
-                    <FaInstagram className="text-blue-600 hover:text-blue-800" />
-                  </Link>
-                  <Link to={member.facebook}>
-                    <FaFacebookF className="text-blue-600 hover:text-blue-800" />
-                  </Link>
-                </div>
-
-                {/* contact button */}
-                <button className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition duration-300">
-                  Conatct {member.name.split(" ")[0]}
+                <button className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">
+                  Contact {member.name.split(" ")[0]}
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
+
       </div>
-    </div>
+    </section>
   );
 };
 

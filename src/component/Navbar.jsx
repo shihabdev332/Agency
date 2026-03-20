@@ -1,249 +1,244 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const categoriesRef = useRef(null);
 
-  const categoriesRef = useRef(null); 
-
-  // Scroll effect
+  // Handle scroll effect to apply glassmorphism
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close categories dropdown on outside click
+  // Close categories dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (categoriesRef.current && !categoriesRef.current.contains(event.target)) {
         setIsCategoriesOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const toggleCategories = () => setIsCategoriesOpen(!isCategoriesOpen);
+  const navLinks = [
+    { name: "Home", path: "/home" },
+    { name: "Services", path: "/services" },
+    { name: "Blog", path: "/blog" },
+  ];
+
+  const categoryLinks = [
+    { name: "Web Design", path: "/website" },
+    { name: "App Development", path: "/app" },
+    { name: "UI/UX Design", path: "/uiux" },
+    { name: "SEO", path: "/seo" },
+  ];
 
   return (
-    <nav
-      className={`bg-[#251533] p-4 shadow-md fixed top-0 left-0 w-full z-50 transition-transform duration-300 ${
-        scrollY > 50 ? "-translate-y-10" : "translate-y-0"
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-[#1a0f24]/80 backdrop-blur-md shadow-lg py-3"
+          : "bg-[#251533] py-5"
       }`}
-      style={{ cursor: "default" }}
     >
-      <div className="container mx-auto flex items-center justify-between">
-        <div className="flex flex-row items-center">
-        <Link to="/">
-          <img
-            src="/logo.png"
-            alt="Logo"
-            className="h-16 hover:scale-150 transition cursor-pointer"
-          />
-        </Link>
-          <p className="font-bold text-gray-300">WAVE PROGRAMMING</p>
+      <div className="container mx-auto px-6 flex items-center justify-between">
+        {/* Logo Section */}
+        <div className="flex items-center gap-3">
+          <Link to="/">
+            <motion.img
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              src="/logo.png"
+              alt="Wave Programming Logo"
+              className="h-12 w-auto cursor-pointer"
+            />
+          </Link>
+          <p className="font-extrabold text-white tracking-wider hidden sm:block">
+            WAVE PROGRAMMING
+          </p>
         </div>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex space-x-4">
-          <Link
-            to="/home"
-            className={`text-white font-semibold hover:text-gray-600 pb-2 cursor-pointer ${
-              location.pathname === "/home" ? "border-b-2 border-blue-500" : ""
-            }`}
-          >
-            Home
-          </Link>
-          <Link
-            to="/services"
-            className={`text-white font-semibold hover:text-gray-600 pb-2 cursor-pointer ${
-              location.pathname === "/services"
-                ? "border-b-2 border-blue-500"
-                : ""
-            }`}
-          >
-            Services
-          </Link>
-          <Link
-            to="/blog"
-            className={`text-white font-semibold hover:text-gray-600 pb-2 cursor-pointer ${
-              location.pathname === "/blog" ? "border-b-2 border-blue-500" : ""
-            }`}
-          >
-            Blog
-          </Link>
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-8">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              to={link.path}
+              className="relative text-gray-300 hover:text-white font-medium transition-colors group"
+            >
+              {link.name}
+              {location.pathname === link.path && (
+                <motion.div
+                  layoutId="underline"
+                  className="absolute left-0 -bottom-1 h-[2px] w-full bg-blue-500"
+                />
+              )}
+            </Link>
+          ))}
 
-          {/* Categories Dropdown */}
+          {/* Dropdown Menu */}
           <div className="relative" ref={categoriesRef}>
             <button
-              className="text-white flex items-center hover:text-gray-600 font-bold cursor-pointer"
-              onClick={toggleCategories}
+              onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+              className="flex items-center text-gray-300 hover:text-white font-medium transition-colors"
             >
               Categories
-              <ChevronDownIcon className="w-5 h-5 ml-1" />
+              <motion.div
+                animate={{ rotate: isCategoriesOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ChevronDownIcon className="w-4 h-4 ml-1" />
+              </motion.div>
             </button>
-            {isCategoriesOpen && (
-              <div className="absolute right-0 mt-2 bg-white border border-gray-200 text-black p-2 space-y-2 rounded shadow-lg">
-                <Link
-                  to="/website"
-                  className="block cursor-pointer text-black hover:bg-gray-100 px-4 py-2 rounded"
-                  onClick={() => setIsMenuOpen(false)}
+
+            <AnimatePresence>
+              {isCategoriesOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="absolute right-0 mt-4 w-52 bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-100"
                 >
-                  Web Design
-                </Link>
-                <Link
-                  to="/app"
-                  className="block cursor-pointer text-black hover:bg-gray-100 px-4 py-2 rounded"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  App Development
-                </Link>
-                <Link
-                  to="/uiux"
-                  className="block cursor-pointer text-black hover:bg-gray-100 px-4 py-2 rounded"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  UI/UX Design
-                </Link>
-                <Link
-                  to="/seo"
-                  className="block cursor-pointer text-black hover:bg-gray-100 px-4 py-2 rounded"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  SEO
-                </Link>
-              </div>
-            )}
+                  <div className="py-2">
+                    {categoryLinks.map((cat) => (
+                      <Link
+                        key={cat.name}
+                        to={cat.path}
+                        onClick={() => setIsCategoriesOpen(false)}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                      >
+                        {cat.name}
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
-        {/* Desktop Buttons */}
-        <div className="hidden md:flex space-x-4">
+        {/* Desktop CTA Buttons */}
+        <div className="hidden md:flex items-center space-x-4">
           <Link to="/login">
-            <button className="text-black bg-blue-50 border hover:bg-blue-700 px-4 py-2 rounded cursor-pointer">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="text-white font-medium hover:text-blue-400 transition-colors px-4 py-2"
+            >
               Log In
-            </button>
+            </motion.button>
           </Link>
           <Link to="/freeTrial">
-            <button className="text-black bg-blue-200 border hover:bg-blue-700 px-4 py-2 rounded cursor-pointer">
+            <motion.button
+              whileHover={{ scale: 1.05, boxShadow: "0px 5px 15px rgba(59, 130, 246, 0.4)" }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-blue-600 text-white font-semibold px-6 py-2 rounded-full hover:bg-blue-700 transition-colors"
+            >
               Free Trial
-            </button>
+            </motion.button>
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu Toggle Button */}
         <button
-          className="md:hidden text-white cursor-pointer"
-          onClick={toggleMenu}
+          className="md:hidden text-white p-2"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            ></path>
-          </svg>
+          {isMenuOpen ? (
+            <XMarkIcon className="w-7 h-7" />
+          ) : (
+            <Bars3Icon className="w-7 h-7" />
+          )}
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-[#38323e] p-4 space-y-4 mt-4">
-          <Link
-            to="/home"
-            className="block text-white cursor-pointer"
-            onClick={() => setIsMenuOpen(false)}
+      {/* Mobile Navigation Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="md:hidden bg-[#1e112a] border-t border-gray-700 overflow-hidden"
           >
-            Home
-          </Link>
-          <Link
-            to="/services"
-            className="block text-white cursor-pointer"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Services
-          </Link>
-          <Link
-            to="/blog"
-            className="block text-white cursor-pointer"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Blog
-          </Link>
+            <div className="flex flex-col px-6 py-4 space-y-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`text-lg font-medium ${
+                    location.pathname === link.path ? "text-blue-400" : "text-gray-300"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
 
-          {/* Mobile Categories Dropdown */}
-          <div ref={categoriesRef}>
-            <button
-              className="block text-white flex items-center cursor-pointer"
-              onClick={toggleCategories}
-            >
-              Categories <ChevronDownIcon className="w-5 h-5 ml-1" />
-            </button>
-            {isCategoriesOpen && (
-              <div className="pl-4 space-y-2">
-                <Link
-                  to="/website"
-                  className="block text-white cursor-pointer"
-                  onClick={() => setIsMenuOpen(false)}
+              {/* Mobile Categories */}
+              <div className="flex flex-col space-y-2">
+                <button
+                  onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+                  className="flex items-center justify-between text-lg font-medium text-gray-300"
                 >
-                  Web Design
-                </Link>
-                <Link
-                  to="/app"
-                  className="block text-white cursor-pointer"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  App Development
-                </Link>
-                <Link
-                  to="/uiux"
-                  className="block text-white cursor-pointer"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  UI/UX Design
-                </Link>
-                <Link
-                  to="/seo"
-                  className="block text-white cursor-pointer"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  SEO
-                </Link>
+                  Categories
+                  <motion.div animate={{ rotate: isCategoriesOpen ? 180 : 0 }}>
+                    <ChevronDownIcon className="w-5 h-5" />
+                  </motion.div>
+                </button>
+                <AnimatePresence>
+                  {isCategoriesOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="pl-4 flex flex-col space-y-3 overflow-hidden"
+                    >
+                      {categoryLinks.map((cat) => (
+                         <Link
+                          key={cat.name}
+                          to={cat.path}
+                          onClick={() => setIsMenuOpen(false)}
+                          className="text-gray-400 hover:text-white"
+                        >
+                          {cat.name}
+                        </Link>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            )}
-          </div>
 
-          <Link
-            to="/login"
-            className="block text-white cursor-pointer"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Log In
-          </Link>
-          <Link
-            to="/freeTrial"
-            className="block text-white cursor-pointer"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Free Trial
-          </Link>
-        </div>
-      )}
-    </nav>
+              <hr className="border-gray-700" />
+              
+              <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                <button className="w-full text-left text-lg font-medium text-gray-300 py-2">
+                  Log In
+                </button>
+              </Link>
+              <Link to="/freeTrial" onClick={() => setIsMenuOpen(false)}>
+                <button className="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl mt-2">
+                  Free Trial
+                </button>
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
   );
 };
 

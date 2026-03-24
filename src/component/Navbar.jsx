@@ -117,7 +117,7 @@ const Navbar = () => {
                         key={cat.name}
                         to={cat.path}
                         onClick={() => setIsCategoriesOpen(false)}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors" 
                       >
                         {cat.name}
                       </Link>
@@ -135,7 +135,7 @@ const Navbar = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="text-white font-medium hover:text-blue-400 transition-colors px-4 py-2"
+              className="text-white font-medium hover:text-blue-400 transition-colors px-4 py-2 cursor-pointer"
             >
               Log In
             </motion.button>
@@ -144,7 +144,7 @@ const Navbar = () => {
             <motion.button
               whileHover={{ scale: 1.05, boxShadow: "0px 5px 15px rgba(59, 130, 246, 0.4)" }}
               whileTap={{ scale: 0.95 }}
-              className="bg-blue-600 text-white font-semibold px-6 py-2 rounded-full hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 text-white font-semibold px-6 py-2 rounded-full hover:bg-blue-700 transition-colors cursor-pointer"
             >
               Free Trial
             </motion.button>
